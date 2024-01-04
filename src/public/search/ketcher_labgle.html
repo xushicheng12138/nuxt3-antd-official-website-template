@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>结构式搜索</title>
+  <link href="https://www.layuicdn.com/layui-v2.5.6/css/layui.css" rel="stylesheet">
+  <script src="https://libs.baidu.com/jquery/2.1.4/jquery.min.js"></script>
+  <script src="https://www.layuicdn.com/layui-v2.5.6/layui.js"></script>
+</head>
+<style type="text/css">
+  .la_btn {
+    background: #E20014;
+    color: white;
+    border-radius: 30px 30px 30px 30px;
+  }
+
+  .layui-btn {
+    width: 166px;
+    margin: 0px 13px;
+    border-radius: 30px 30px 30px 30px;
+  }
+
+  /* .layui-form-radio>i:hover, .layui-form-radioed>i{color: #00AAEA;} */
+  .layui-input-inline {
+    width: auto !important;
+    margin-top: 10px;
+  }
+
+  .layui-btn-primary:hover {
+    border-color: #E20014;
+    color: #E20014;
+    border-radius: 30px 30px 30px 30px;
+  }
+</style>
+
+<body style="width: 100%;margin: 0 auto;">
+
+
+  <iframe id="ketcher-frame" src="ketcher/ketcher.html" scrolling="no"
+    style="width: 99%;height:600px;border: 1px solid #bbb" frameborder="0"></iframe>
+  <br>
+  <form class="layui-form" action="" style="width: 100%;margin: 0 auto;display: flex;justify-content: center;">
+    <div class="layui-form-item">
+      <div class="layui-input-inline ">
+        <button class="layui-btn layui-btn-primary" id="get-smiles" lay-submit lay-filter="formDemo_b"
+          type="button">子结构匹配</button>
+        <button class="layui-btn la_btn" id="get-smiles" lay-submit lay-filter="formDemo" type="button">全结构匹配</button>
+      </div>
+    </div>
+  </form>
+
+
+  <script>
+    jQuery(function ($) {
+      $('input#min').keyup(function () {
+        var c = $(this);
+        if (/^[^0-9\.]+$/g.test(c.val())) {//替换非数字字符
+          var temp_amount = c.val().replace(/^[^0-9\.]+$/g, '');
+          $(this).val(temp_amount);
+        }
+      })
+      $('input#max').keyup(function () {
+        var c = $(this);
+        if (/^[^0-9\.]+$/g.test(c.val())) {//替换非数字字符
+          var temp_amount = c.val().replace(/^[^0-9\.]+$/g, '');
+          $(this).val(temp_amount);
+        }
+      })
+      $('input#min').blur(function () {
+        var c = $(this).val();
+        if (c < 0.8 || c > 1) {
+          layer.msg('请输入0.8至1.0之间的数字！');
+          $(this).val('');
+        }
+      })
+      $('input#max').blur(function () {
+        var c = $(this).val();
+        if (c < 0.8 || c > 1) {
+          layer.msg('请输入0.8至1.0之间的数字！');
+          $(this).val('');
+        }
+      })
+      $('#close_ketcher').click(function () {
+        var index = parent.layer.getFrameIndex(window.name); //获取窗口索引
+        parent.layer.close(index);  // 关闭layer
+      });
+      $('#ketcher-frame').on('load', function () {
+        var ketcher = this.contentWindow.ketcher;
+        layui.use('form', function () {
+          var form = layui.form;
+          form.on('radio(ssType)', function (data) {
+            if (data.value == 'sim') {
+              $(".fanwei").show();
+            } else {
+              $(".fanwei").hide();
+            }
+          });
+          form.on('submit(formDemo)', function (data) {
+            var smiles = ketcher.getSmiles();
+            var data = { smiles_type: 1 };
+            window.parent.location.href = window.parent.location.origin + "/product"
+            localStorage.setItem('smiles', smiles)
+            localStorage.setItem('smiles_type', data.smiles_type)
+            return false;
+          });
+          form.on('submit(formDemo_b)', function (data) {
+            var smiles = ketcher.getSmiles();
+            var data = { smiles_type: 2 };
+            window.parent.location.href = window.parent.location.origin + "/product"
+            localStorage.setItem('smiles', smiles)
+            localStorage.setItem('smiles_type', data.smiles_type)
+            return false;
+          });
+        });
+      });
+    });
+  </script>
+</body>
+
+</html>
